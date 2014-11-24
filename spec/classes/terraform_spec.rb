@@ -4,8 +4,8 @@ describe "terraform" do
   let(:facts) { default_test_facts }
   let(:default_params) do
     {
-      :ensure  => "present",
-      :version => "0.9.9"
+      :version => "0.9.9",
+      :user    => "testuser"
     }
   end
 
@@ -15,7 +15,7 @@ describe "terraform" do
       [
         "rm -rf /tmp/terraform* /tmp/0",
         # download the zip to tmp
-        "curl http://dl.bintray.com/mitchellh/terraform/0.9.9_darwin_amd64.zip?direct > /tmp/terraform-v0.9.9.zip",
+        "curl http://dl.bintray.com/mitchellh/terraform/terraform_0.9.9_darwin_amd64.zip?direct > /tmp/terraform-v0.9.9.zip",
         # extract the zip to tmp spot
         "mkdir /tmp/terraform",
         "unzip -o /tmp/terraform-v0.9.9.zip -d /tmp/terraform",
@@ -28,12 +28,11 @@ describe "terraform" do
       ].join(" && ")
     }
 
-    it do
+    it "have exec and file" do
       should contain_exec("install terraform v0.9.9").with({
         :command => command,
         :unless  => "test -x /test/boxen/terraform/terraform && /test/boxen/terraform/terraform -v | grep '\\bv0.9.9\\b'",
         :user    => "testuser",
-
       })
 
       should contain_file("/test/boxen/env.d/terraform.sh")
